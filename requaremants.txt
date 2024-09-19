@@ -1,0 +1,12 @@
+Django
+djangorestframework
+Pillow
+django-cors-headers
+dj-rest-auth
+django-allauth
+drf-yasg
+requests
+djangorestframework-simplejwt
+setuptools
+reportlab
+django-debug-toolbar
