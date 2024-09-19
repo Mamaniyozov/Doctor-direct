@@ -84,5 +84,11 @@ class CreateUserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CreateUser.objects.all()
     serializer_class = CreateUserSerializer
 
+class ListUsersView(APIView):
+    permission_classes = []
+
+    def get(self, request):
+        users = User.objects.all().values('id', 'username', 'first_name', 'last_name', 'date_joined')
+        return Response(users, status=status.HTTP_200_OK)
 
 # Create your views here.
