@@ -121,5 +121,12 @@ class LoginUserDetailView(APIView):
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
+class UserInfoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        serializer = UserSerializers(user)
+        return Response(serializer.data)
 
 # Create your views here.

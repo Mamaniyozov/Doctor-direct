@@ -64,3 +64,4 @@ class LoginUserSerializer(ModelSerializer):
         return data
 
 
+
