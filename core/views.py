@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import generics, status,permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
-from .serializers import UserSerializers, UserProfileSerializer, CreateUserSerializer,LoginUserSerializer
+from .serializers import UserSerializers, UserProfileSerializer, CreateUserSerializer,LoginUserSerializer,RegisterSerializer        
 from .models import UserProfile, CreateUser ,LoginUser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate 
@@ -128,5 +128,51 @@ class UserInfoView(APIView):
         user = request.user
         serializer = UserSerializers(user)
         return Response(serializer.data)
+
+class RegisterView(generics.CreateAPIView):
+    serializer_class = RegisterSerializer
+    permission_classes = []
+
+    def create(self, request, *args, **kwargs):
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        username = serializer.validated_data.get('username')
+        first_name = serializer.validated_data.get('first_name')
+        last_name = serializer.validated_data.get('last_name')
+        email = serializer.validated_data.get('email')  
+        password = serializer.validated_data.get('password')
+
+        
+        while User.objects.filter(username=username).exists():
+            username = f"{username}_{User.objects.count() + 1}"
+
+        if User.objects.filter(username=username).exists():
+            return Response({
+                'detail': 'Username already exists',
+                'code': 'username_exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=password
+        )
+
+        try:
+            refresh = RefreshToken.for_user(user)
+        except Exception as e:
+            return Response({
+                'detail': f"Error generating token: {str(e)}",
+                'code': 'token_error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+       
+        return Response({
+            'access': str(refresh.access_token)
+        }, status=status.HTTP_201_CREATED)
 
 # Create your views here.

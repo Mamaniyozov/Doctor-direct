@@ -63,5 +63,29 @@ class LoginUserSerializer(ModelSerializer):
             raise serializers.ValidationError("Login with email is not allowed.")
         return data
 
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email','password', 'username'] 
+
+    def validate_username(self, value):
+        # Check if the username already exists
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("This username is already taken. Please choose another one.")
+        return value
+
+    def create(self, validated_data):
+        # Create a new user with the validated data
+        user = User.objects.create_user(
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            password=validated_data['password'],
+            username=validated_data['username'],
+            email=validated_data['email'],  
+        )
+        return user
+
 
 
