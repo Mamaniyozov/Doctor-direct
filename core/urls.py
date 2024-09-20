@@ -15,7 +15,8 @@ from .views import (
     ListUsersView,
     LoginUserDetailView,
     LoginUserListCreateView,
-    UserInfoView
+    UserInfoView,
+    RegisterView
     )
 
 urlpatterns = [
@@ -30,7 +31,9 @@ urlpatterns = [
     path('users/',ListUsersView.as_view(), name='all-users'),
     path('userinfo/', UserInfoView.as_view(), name='user-info'),
     path('loginuser/', LoginUserListCreateView.as_view(), name='loginuser-list-create'),
-    path('loginuser/<int:pk>/', LoginUserDetailView.as_view(), name='loginuser-detail'),
+    path('loginuser/<int:pk>/', LoginUserDetailView.as_view(), name='loginuser-detail'),   
+    path('register/', RegisterView.as_view(), name='register'),
+             
 
 
 
