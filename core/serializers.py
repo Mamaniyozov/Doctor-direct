@@ -1,4 +1,4 @@
-from.models import UserProfile, CreateUser
+from.models import UserProfile, CreateUser,LoginUser
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, SerializerMethodField       
 from django.contrib.auth.models import User
@@ -52,4 +52,15 @@ class CreateUserSerializer(ModelSerializer):
     def get_access_token(self, obj):
         refresh = RefreshToken.for_user(obj.user)
         return str(refresh.access_token)
+    
+class LoginUserSerializer(ModelSerializer):
+    class Meta:
+        model = LoginUser
+        fields = ['username', 'password']  # Only include the username and password fields
+
+    def validate(self, data):
+        if 'email' in data:
+            raise serializers.ValidationError("Login with email is not allowed.")
+        return data
+
 

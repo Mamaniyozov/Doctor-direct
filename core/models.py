@@ -24,4 +24,15 @@ class CreateUser(models.Model):
     def __str__(self):
         return f"{self.firstname} {self.lastname} {self.email} {self.password}"
     
+class LoginUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    firstname = models.CharField(max_length=50)
+    lastname = models.CharField(max_length=50)
+    email = models.EmailField(default='default@example.com')
+    password = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.firstname} {self.lastname} {self.email} {self.password}"
+    
+    
 # Create your models here.

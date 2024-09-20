@@ -2,9 +2,10 @@ from django.contrib.auth.models import User
 from rest_framework import generics, status,permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
-from .serializers import UserSerializers, UserProfileSerializer, CreateUserSerializer
-from .models import UserProfile, CreateUser
-from rest_framework.permissions import IsAuthenticated
+from .serializers import UserSerializers, UserProfileSerializer, CreateUserSerializer,LoginUserSerializer
+from .models import UserProfile, CreateUser ,LoginUser
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.contrib.auth import authenticate 
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponse,JsonResponse  
 from rest_framework.views import APIView 
@@ -90,5 +91,35 @@ class ListUsersView(APIView):
     def get(self, request):
         users = User.objects.all().values('id', 'username', 'first_name', 'last_name', 'date_joined')
         return Response(users, status=status.HTTP_200_OK)
+    
+
+class LoginUserListCreateView(generics.ListCreateAPIView):
+    queryset = LoginUser.objects.all()
+    serializer_class = LoginUserSerializer
+
+
+class LoginUserDetailView(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            response = Response({
+                "access_token": access_token
+                
+            }, status=status.HTTP_200_OK)
+
+            response['Authorization'] = f'Bearer {access_token}'
+            return response
+        else:
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 # Create your views here.
