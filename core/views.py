@@ -128,7 +128,7 @@ class UserInfoView(APIView):
         user = request.user
         serializer = UserSerializers(user)
         return Response(serializer.data)
-
+    
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = []
@@ -144,16 +144,13 @@ class RegisterView(generics.CreateAPIView):
         email = serializer.validated_data.get('email')  
         password = serializer.validated_data.get('password')
 
-        
-        while User.objects.filter(username=username).exists():
-            username = f"{username}_{User.objects.count() + 1}"
-
         if User.objects.filter(username=username).exists():
+            # Return custom error message in Uzbek
             return Response({
-                'detail': 'Username already exists',
-                'code': 'username_exists'
+                'error': 'Bunday login ga ega foydalanuvchi allaqachon mavjud.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
+        # Create the user if the username is not taken
         user = User.objects.create_user(
             username=username,
             first_name=first_name,
@@ -170,7 +167,6 @@ class RegisterView(generics.CreateAPIView):
                 'code': 'token_error'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-       
         return Response({
             'access': str(refresh.access_token)
         }, status=status.HTTP_201_CREATED)

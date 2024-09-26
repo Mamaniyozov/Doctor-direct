@@ -65,15 +65,21 @@ class LoginUserSerializer(ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    
+
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email','password', 'username'] 
+        fields = ['first_name', 'last_name', 'email', 'password', 'username']
+        extra_kwargs = {
+            'username': {
+                'validators': []  # Disable the default unique validator
+            }
+        }
 
     def validate_username(self, value):
-        # Check if the username already exists
+        # Custom username validation
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("This username is already taken. Please choose another one.")
+            # Return the custom error message in Uzbek
+            raise serializers.ValidationError("Bunday login ga ega foydalanuvchi allaqachon mavjud.")
         return value
 
     def create(self, validated_data):
@@ -83,9 +89,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             last_name=validated_data['last_name'],
             password=validated_data['password'],
             username=validated_data['username'],
-            email=validated_data['email'],  
+            email=validated_data['email'],
         )
         return user
-
-
-
