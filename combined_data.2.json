@@ -1,0 +1,119 @@
+{
+    "Terapevt": {
+        "branches": [
+            {
+                "id": 1,
+                "profession": "Terapevt",
+                "rooms": 12,
+                "apirarsi_room": 2,
+                "responsible_person": "Hamidova.J",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "LOR": {
+        "branches": [
+            {
+                "id": 2,
+                "profession": "LOR",
+                "rooms": 34,
+                "apirarsi_room": 35,
+                "responsible_person": "Rustamov.T",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "Revmatolog": {
+        "branches": [
+            {
+                "id": 3,
+                "profession": "Revmatolog",
+                "rooms": 20,
+                "apirarsi_room": 21,
+                "responsible_person": "hoshimov.Y",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "Stomatologiya": {
+        "branches": [
+            {
+                "id": 5,
+                "profession": "Stomatologiya",
+                "rooms": 14,
+                "apirarsi_room": 27,
+                "responsible_person": "Mamadaliyev.A",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "Ginekolog": {
+        "branches": [
+            {
+                "id": 6,
+                "profession": "Ginekolog",
+                "rooms": 15,
+                "apirarsi_room": 16,
+                "responsible_person": "Akhmedova.S",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "Urolog": {
+        "branches": [
+            {
+                "id": 7,
+                "profession": "Urolog",
+                "rooms": 10,
+                "apirarsi_room": 11,
+                "responsible_person": "Karimov.U",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "Fizioterapiya": {
+        "branches": [
+            {
+                "id": 8,
+                "profession": "Fizioterapiya",
+                "rooms": 18,
+                "apirarsi_room": 19,
+                "responsible_person": "Ismailov.B",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "Nevrolog": {
+        "branches": [
+            {
+                "id": 9,
+                "profession": "Nevrolog",
+                "rooms": 22,
+                "apirarsi_room": 23,
+                "responsible_person": "Saidov.R",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    },
+    "Xirurg": {
+        "branches": [
+            {
+                "id": 10,
+                "profession": "Xirurg",
+                "rooms": 30,
+                "apirarsi_room": 31,
+                "responsible_person": "Jalilov.F",
+                "work_time": "5/7 from 8:00 to 17:00"
+            }
+        ],
+        "users": []
+    }
+}
