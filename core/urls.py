@@ -16,7 +16,9 @@ from .views import (
     LoginUserDetailView,
     LoginUserListCreateView,
     UserInfoView,
-    RegisterView
+    RegisterView,
+    ProfessionView,
+    UserView,
     )
 
 urlpatterns = [
@@ -33,7 +35,9 @@ urlpatterns = [
     path('loginuser/', LoginUserListCreateView.as_view(), name='loginuser-list-create'),
     path('loginuser/<int:pk>/', LoginUserDetailView.as_view(), name='loginuser-detail'),   
     path('register/', RegisterView.as_view(), name='register'),
-             
+    path('professions/', ProfessionView.as_view(), name='list_professions'),
+    path('professions/<str:profession>/', ProfessionView.as_view(), name='profession_detail'),
+    path('professions/<str:profession>/add-user/', UserView.as_view(), name='add_user'),
 
 
 

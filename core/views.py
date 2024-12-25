@@ -1,3 +1,5 @@
+import json
+import os
 from django.contrib.auth.models import User
 from rest_framework import generics, status,permissions
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -9,6 +11,10 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponse,JsonResponse  
 from rest_framework.views import APIView 
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
 
 
 class ProtectedView(APIView):
@@ -171,4 +177,119 @@ class RegisterView(generics.CreateAPIView):
             'access': str(refresh.access_token)
         }, status=status.HTTP_201_CREATED)
 
+
+# Path to the JSON file
+JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), 'combined_data2.json')
+
+# Helper functions to read and write JSON
+def read_json():
+    with open(JSON_FILE_PATH, "r") as file:
+        return json.load(file)
+
+def write_json(data):
+    with open(JSON_FILE_PATH, "w") as file:
+        json.dump(data, file, indent=4)
+
+# Class-Based View for JSON CRUD operations
+@method_decorator(csrf_exempt, name='dispatch')
+class ProfessionView(View):
+    def get(self, request, profession=None):
+        """List all data or a specific profession"""
+        data = read_json()  # Ensure read_json is properly implemented to read your JSON file
+
+        if profession:
+            if profession in data:
+                return JsonResponse(
+                    data[profession], 
+                    safe=False, 
+                    json_dumps_params={'indent': 4}  # Pretty print JSON
+                )
+            return JsonResponse({"error": "Profession not found"}, status=404)
+        
+        return JsonResponse(
+            data, 
+            safe=False, 
+            json_dumps_params={'indent': 4}  # Pretty print JSON
+        )
+
+    def post(self, request):
+        """Add a new branch"""
+        data = read_json()
+        try:
+            profession = request.POST.get("profession")
+            branch_data = {
+                "id": int(request.POST.get("id")),
+                "profession": request.POST.get("profession"),
+                "rooms": int(request.POST.get("rooms")),
+                "apirarsi_room": int(request.POST.get("apirarsi_room")),
+                "responsible_person": request.POST.get("responsible_person"),
+                "work_time": request.POST.get("work_time"),
+            }
+            if profession not in data:
+                data[profession] = {"branches": [], "users": []}
+            data[profession]["branches"].append(branch_data)
+            write_json(data)
+            return JsonResponse({"message": "Branch added successfully"})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    def put(self, request, profession):
+        """Update an existing branch"""
+        data = read_json()
+        if profession not in data:
+            return JsonResponse({"error": "Profession not found"}, status=404)
+
+        try:
+            branch_id = int(request.POST.get("id"))
+            updated_data = {
+                "rooms": int(request.POST.get("rooms", 0)),
+                "apirarsi_room": int(request.POST.get("apirarsi_room", 0)),
+                "responsible_person": request.POST.get("responsible_person"),
+                "work_time": request.POST.get("work_time"),
+            }
+            for branch in data[profession]["branches"]:
+                if branch["id"] == branch_id:
+                    branch.update(updated_data)
+                    write_json(data)
+                    return JsonResponse({"message": "Branch updated successfully"})
+            return JsonResponse({"error": "Branch not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    def delete(self, request, profession):
+        """Delete a branch"""
+        data = read_json()
+        if profession not in data:
+            return JsonResponse({"error": "Profession not found"}, status=404)
+
+        try:
+            branch_id = int(request.POST.get("id"))
+            data[profession]["branches"] = [
+                branch for branch in data[profession]["branches"] if branch["id"] != branch_id
+            ]
+            write_json(data)
+            return JsonResponse({"message": "Branch deleted successfully"})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class UserView(View):
+    def post(self, request, profession):
+        """Add a new user to a profession"""
+        data = read_json()
+        if profession not in data:
+            return JsonResponse({"error": "Profession not found"}, status=404)
+
+        try:
+            user_data = {
+                "id": int(request.POST.get("id")),
+                "name": request.POST.get("name"),
+                "role": request.POST.get("role"),
+            }
+            data[profession]["users"].append(user_data)
+            write_json(data)
+            return JsonResponse({"message": "User added successfully"})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
 # Create your views here.

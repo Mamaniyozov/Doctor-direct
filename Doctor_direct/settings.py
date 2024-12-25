@@ -11,9 +11,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from django.middleware.csrf import CsrfViewMiddleware
+from django.utils.deprecation import MiddlewareMixin
+
+class DisableCSRF(MiddlewareMixin):
+    def process_request(self, request):
+        setattr(request, '_dont_enforce_csrf_checks', True)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+SITE_ID = 1
 
 
 # Quick-start development settings - unsuitable for production
